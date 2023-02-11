@@ -1,26 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Transaction } from './entities/transaction.entity';
 
+export interface TransactionInterface {
+  amount: number;
+}
 @Injectable()
 export class TransactionsService {
-  create(createTransactionDto: CreateTransactionDto) {
-    return 'This action adds a new transaction';
+  constructor(
+    @InjectRepository(Transaction)
+    private transactionRepository: Repository<TransactionInterface>,
+  ) {}
+
+  create(transaction: TransactionInterface): Promise<TransactionInterface> {
+    return this.transactionRepository.save(
+      this.transactionRepository.create(transaction),
+    );
   }
 
-  findAll() {
-    return `This action returns all transactions`;
+  findAll(): Promise<TransactionInterface[]> {
+    return this.transactionRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} transaction`;
+  findOne(transactionId: number) {
+    return `This action returns a #${transactionId} transaction`;
   }
 
-  update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    return `This action updates a #${id} transaction`;
+  update(transactionId: number, data: any): Promise<any> {
+    return this.transactionRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        amount: data.amount,
+      })
+      .where('transactionId = :transactionId', { transactionId })
+      .execute();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} transaction`;
+  delete(transactionId: number): Promise<any> {
+    return this.transactionRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Transaction)
+      .where('transactionId = :transactionId', { transactionId })
+      .execute();
   }
 }

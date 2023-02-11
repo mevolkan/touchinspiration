@@ -1,34 +1,59 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { WalletService } from './wallet.service';
-import { CreateWalletDto } from './dto/create-wallet.dto';
-import { UpdateWalletDto } from './dto/update-wallet.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+  Req,
+} from '@nestjs/common';
+import { User } from 'src/users/entities/user.entity';
+import { WalletInterface, WalletService } from './wallet.service';
 
+interface CreateWalletDto {
+  name: string;
+  amount: number;
+  user: User;
+}
+
+interface CreateWalletDto {
+  name: string;
+  amount: number;
+}
 @Controller('wallet')
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 
   @Post()
-  create(@Body() createWalletDto: CreateWalletDto) {
-    return this.walletService.create(createWalletDto);
+  async create(@Body() createWalletDto: CreateWalletDto) {
+    const wallet = await this.walletService.create(createWalletDto);
+    if (!wallet) {
+      return 'Error in creating wallet';
+    }
+    return 'Wallet created successfully';
   }
 
   @Get()
-  findAll() {
-    return this.walletService.findAll();
+  async findAll(@Req() request: Request) {
+    const wallet: Array<WalletInterface> = await this.walletService.findAll();
+    return wallet;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.walletService.findOne(+id);
+  @Get(':walletId')
+  findOne(@Param('walletId') walletId: number) {
+    return this.walletService.findOne(+walletId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWalletDto: UpdateWalletDto) {
-    return this.walletService.update(+id, updateWalletDto);
+  @Put(':walletId')
+  async update(@Param('walletId') walletId: number, @Body() body: any) {
+    const newWallet: any = await this.walletService.update(walletId, body);
+    return 'Wallet updated';
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.walletService.remove(+id);
+  @Delete(':walletId')
+  async remove(@Param('walletId') walletId: number) {
+    await this.walletService.delete(+walletId);
+    return 'Wallet deleted';
   }
 }

@@ -2,9 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { User } from './users/entities/user.entity';
-import { Wallet } from './wallet/entities/wallet.entity';
-import { Transaction } from './transactions/entities/transaction.entity';
 import { WalletModule } from './wallet/wallet.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -21,7 +18,7 @@ import 'dotenv/config';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [User, Wallet, Transaction],
+      entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
   ],

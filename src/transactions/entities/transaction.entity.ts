@@ -9,16 +9,18 @@ import { Wallet } from 'src/wallet/entities/wallet.entity';
 
 @Entity()
 export class Transaction {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   transactionId: number;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   transactionDate: Date;
 
   @Column()
   amount: number;
 
-  @ManyToMany(() => Wallet)
+  @ManyToMany(() => Wallet, {
+    cascade: ['insert', 'update'],
+  })
   @JoinTable()
   wallet: Wallet[];
 }

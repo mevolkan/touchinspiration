@@ -6,40 +6,55 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
-import { TransactionsService } from './transactions.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import {
+  TransactionInterface,
+  TransactionsService,
+} from './transactions.service';
+
+interface CreateTransactionDto{
+  amount: number;
+}
 
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+  async create(@Body() createTransactionDto: CreateTransactionDto) {
+    const transaction = await this.transactionsService.create(createTransactionDto);
+    if (!transaction) {
+      return 'Error creating transaction';
+    }
+    return 'Transaction created successfully';
   }
 
   @Get()
-  findAll() {
-    return this.transactionsService.findAll();
+  async findAll(@Req() request: Request) {
+    const transaction: Array<TransactionInterface> = await this.transactionsService.findAll();
+    return transaction;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(+id);
+  @Get(':transactionId')
+  findOne(@Param('transactionId') transactionId: number) {
+    return this.transactionsService.findOne(+transactionId);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateTransactionDto: UpdateTransactionDto,
+  @Patch(':transactionId')
+  async update(
+    @Param('transactionId') transactionId: number,
+    @Body() body: any,
   ) {
-    return this.transactionsService.update(+id, updateTransactionDto);
+    const newTransaction: any = await this.transactionsService.update(
+      +transactionId,
+      body,
+    );
+    return 'Transaction updated';
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transactionsService.remove(+id);
+  @Delete(':transactionId')
+  async delete(@Param('transactionId') transactionId: number) {
+    await this.transactionsService.delete(+transactionId);
   }
 }

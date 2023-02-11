@@ -6,37 +6,48 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
+  Req,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Request } from 'express';
+import { UserInterface, UsersService } from './users.service';
+
+interface CreateUserDto {
+  firstname: string;
+  lastname: string;
+  email: string;
+}
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const user = await this.usersService.create(createUserDto);
+    if (!user) {
+      return 'Error in creating user';
+    }
+    return 'User created successfully';
   }
-
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(@Req() request: Request) {
+    const user: Array<UserInterface> = await this.usersService.findAll();
+    return user;
   }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() body: any) {
+    const newUser: any = await this.usersService.update(id, body);
+    return 'User updated';
   }
-
+  
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async delete(@Param('id') id: string) {
+    await this.usersService.delete(id);
+    return 'User deleted';
   }
 }

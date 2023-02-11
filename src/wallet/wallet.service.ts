@@ -1,26 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { CreateWalletDto } from './dto/create-wallet.dto';
-import { UpdateWalletDto } from './dto/update-wallet.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Wallet } from './entities/wallet.entity';
 
+export interface WalletInterface {
+  name: string;
+  amount: number;
+}
 @Injectable()
 export class WalletService {
-  create(createWalletDto: CreateWalletDto) {
-    return 'This action adds a new wallet';
+  constructor(
+    @InjectRepository(Wallet)
+    private walletRepository: Repository<WalletInterface>,
+  ) {}
+
+  create(wallet: WalletInterface): Promise<WalletInterface> {
+    return this.walletRepository.save(this.walletRepository.create(wallet));
   }
 
-  findAll() {
-    return `This action returns all wallet`;
+  findAll(): Promise<WalletInterface[]> {
+    return this.walletRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} wallet`;
+  findOne(walletId: number) {
+    return `This action returns a #${walletId} wallet`;
   }
 
-  update(id: number, updateWalletDto: UpdateWalletDto) {
-    return `This action updates a #${id} wallet`;
+  update(walletId: number, data: any): Promise<any> {
+    return this.walletRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        name: data.name,
+        amount: data.amount,
+      })
+      .where('walletId = :walletId', { walletId })
+      .execute();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wallet`;
+  delete(walletId: number): Promise<any> {
+    return this.walletRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Wallet)
+      .where('walletId = :walletId', { walletId })
+      .execute();
   }
 }
