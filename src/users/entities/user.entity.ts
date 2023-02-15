@@ -16,5 +16,5 @@ export class User {
   email: string;
 
   @OneToMany(() => Wallet, (wallet) => wallet.user)
-  wallet: Wallet;
+  wallet: Wallet[];
 }

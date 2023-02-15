@@ -6,6 +6,8 @@ import { Wallet } from './entities/wallet.entity';
 export interface WalletInterface {
   name: string;
   amount: number;
+  userId: number;
+  walletId: number;
 }
 @Injectable()
 export class WalletService {
@@ -19,11 +21,16 @@ export class WalletService {
   }
 
   findAll(): Promise<WalletInterface[]> {
-    return this.walletRepository.find();
+    return this.walletRepository.find({
+      relations: ['user'],
+    });
   }
 
-  findOne(walletId: number) {
-    return `This action returns a #${walletId} wallet`;
+  findOne(walletId: number): Promise<any> {
+    return this.walletRepository.findOne({
+      where: { walletId: walletId },
+      relations: ['user'],
+    });
   }
 
   update(walletId: number, data: any): Promise<any> {
@@ -33,6 +40,7 @@ export class WalletService {
       .set({
         name: data.name,
         amount: data.amount,
+        userId: data.userId,
       })
       .where('walletId = :walletId', { walletId })
       .execute();

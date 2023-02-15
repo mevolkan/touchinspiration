@@ -4,6 +4,8 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
+  CreateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Wallet } from 'src/wallet/entities/wallet.entity';
 
@@ -12,14 +14,16 @@ export class Transaction {
   @PrimaryGeneratedColumn('uuid')
   transactionId: number;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   transactionDate: Date;
 
   @Column()
   amount: number;
 
-  @ManyToMany(() => Wallet, {
-    cascade: ['insert', 'update'],
+  @ManyToOne(() => Wallet, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinTable()
   wallet: Wallet[];

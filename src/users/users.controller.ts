@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
@@ -16,6 +15,7 @@ interface CreateUserDto {
   firstname: string;
   lastname: string;
   email: string;
+  id: number;
 }
 
 @Controller('users')
@@ -36,17 +36,17 @@ export class UsersController {
     return user;
   }
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    return this.usersService.findOne(id);
   }
   @Put(':id')
-  async update(@Param('id') id: string, @Body() body: any) {
+  async update(@Param('id') id: number, @Body() body: any) {
     const newUser: any = await this.usersService.update(id, body);
     return 'User updated';
   }
-  
+
   @Delete(':id')
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id') id: number) {
     await this.usersService.delete(id);
     return 'User deleted';
   }

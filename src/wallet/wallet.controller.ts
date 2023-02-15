@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
@@ -15,13 +14,10 @@ import { WalletInterface, WalletService } from './wallet.service';
 interface CreateWalletDto {
   name: string;
   amount: number;
-  user: User;
+  userId: number;
+  walletId: number;
 }
 
-interface CreateWalletDto {
-  name: string;
-  amount: number;
-}
 @Controller('wallet')
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
@@ -42,8 +38,8 @@ export class WalletController {
   }
 
   @Get(':walletId')
-  findOne(@Param('walletId') walletId: number) {
-    return this.walletService.findOne(+walletId);
+  async findOne(@Param('walletId') walletId: number) {
+    return this.walletService.findOne(walletId);
   }
 
   @Put(':walletId')
@@ -51,6 +47,7 @@ export class WalletController {
     const newWallet: any = await this.walletService.update(walletId, body);
     return 'Wallet updated';
   }
+
   @Delete(':walletId')
   async remove(@Param('walletId') walletId: number) {
     await this.walletService.delete(+walletId);

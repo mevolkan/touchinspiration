@@ -7,6 +7,7 @@ export interface UserInterface {
   firstname: string;
   lastname: string;
   email: string;
+  id: number;
 }
 @Injectable()
 export class UsersService {
@@ -20,14 +21,19 @@ export class UsersService {
   }
 
   findAll(): Promise<UserInterface[]> {
-    return this.userRepository.find();
+    return this.userRepository.find({
+      relations: ['wallet'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: number): Promise<any> {
+    return this.userRepository.findOne({
+      where: { id: id },
+      relations: ['wallet'],
+    });
   }
 
-  update(id: string, data: any): Promise<any> {
+  update(id: number, data: any): Promise<any> {
     return this.userRepository
       .createQueryBuilder()
       .update()
@@ -40,7 +46,7 @@ export class UsersService {
       .execute();
   }
 
-  delete(id: string): Promise<any> {
+  delete(id: number): Promise<any> {
     return this.userRepository
       .createQueryBuilder()
       .delete()
