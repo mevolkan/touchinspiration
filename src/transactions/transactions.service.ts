@@ -1,26 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Transaction } from './entities/transaction.entity';
+import { Transactions } from './entities/transaction.entity';
 
-export interface TransactionInterface {
+export interface TransactionsInterface {
   amount: number;
+  walletId: number;
 }
 @Injectable()
 export class TransactionsService {
   constructor(
-    @InjectRepository(Transaction)
-    private transactionRepository: Repository<TransactionInterface>,
+    @InjectRepository(Transactions)
+    private transactionRepository: Repository<TransactionsInterface>,
   ) {}
 
-  create(transaction: TransactionInterface): Promise<TransactionInterface> {
+  create(transaction: TransactionsInterface): Promise<TransactionsInterface> {
     return this.transactionRepository.save(
       this.transactionRepository.create(transaction),
     );
   }
 
-  findAll(): Promise<TransactionInterface[]> {
-    return this.transactionRepository.find();
+  findAll(): Promise<TransactionsInterface[]> {
+    return this.transactionRepository.find({
+      relations: ['wallet'],
+    });
   }
 
   findOne(transactionId: number) {
@@ -33,6 +36,7 @@ export class TransactionsService {
       .update()
       .set({
         amount: data.amount,
+        walletId: data.walletId,
       })
       .where('transactionId = :transactionId', { transactionId })
       .execute();
@@ -42,7 +46,7 @@ export class TransactionsService {
     return this.transactionRepository
       .createQueryBuilder()
       .delete()
-      .from(Transaction)
+      .from(Transactions)
       .where('transactionId = :transactionId', { transactionId })
       .execute();
   }

@@ -30,15 +30,18 @@ export class UsersController {
     }
     return 'User created successfully';
   }
+
   @Get()
   async findAll(@Req() request: Request) {
     const user: Array<UserInterface> = await this.usersService.findAll();
     return user;
   }
+
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return this.usersService.findOne(id);
   }
+
   @Put(':id')
   async update(@Param('id') id: number, @Body() body: any) {
     const newUser: any = await this.usersService.update(id, body);

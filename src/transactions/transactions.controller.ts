@@ -9,12 +9,13 @@ import {
   Req,
 } from '@nestjs/common';
 import {
-  TransactionInterface,
+  TransactionsInterface,
   TransactionsService,
 } from './transactions.service';
 
-interface CreateTransactionDto{
+interface CreateTransactionDto {
   amount: number;
+  walletId: number;
 }
 
 @Controller('transactions')
@@ -23,7 +24,9 @@ export class TransactionsController {
 
   @Post()
   async create(@Body() createTransactionDto: CreateTransactionDto) {
-    const transaction = await this.transactionsService.create(createTransactionDto);
+    const transaction = await this.transactionsService.create(
+      createTransactionDto,
+    );
     if (!transaction) {
       return 'Error creating transaction';
     }
@@ -32,7 +35,8 @@ export class TransactionsController {
 
   @Get()
   async findAll(@Req() request: Request) {
-    const transaction: Array<TransactionInterface> = await this.transactionsService.findAll();
+    const transaction: Array<TransactionsInterface> =
+      await this.transactionsService.findAll();
     return transaction;
   }
 
@@ -50,7 +54,7 @@ export class TransactionsController {
       +transactionId,
       body,
     );
-    return 'Transaction updated';
+    return 'Transaction updated' + newTransaction;
   }
 
   @Delete(':transactionId')

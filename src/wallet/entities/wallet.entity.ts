@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { Transaction } from 'src/transactions/entities/transaction.entity';
+import { Transactions } from 'src/transactions/entities/transaction.entity';
 
 @Entity()
 export class Wallet {
@@ -32,9 +32,8 @@ export class Wallet {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  // @JoinColumn({ name: 'id', referencedColumnName: 'id' })
   user: User[];
 
-  @OneToMany(() => Transaction, (transaction) => transaction.wallet)
-  transactions: Transaction[];
+  @OneToMany(() => Transactions, (transactions) => transactions.wallet)
+  transactions: Transactions[];
 }

@@ -26,11 +26,35 @@ export class UsersService {
     });
   }
 
+  // findOne(id: number): Promise<any> {
+  //   return this.userRepository.findOne({
+  //     where: { id: id },
+  //     relations: ['wallet'],
+  //   });
+  // }
+
   findOne(id: number): Promise<any> {
-    return this.userRepository.findOne({
-      where: { id: id },
-      relations: ['wallet'],
-    });
+    const numberofWallets = this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id =:id', { id })
+      .leftJoinAndSelect('user.wallet', 'wallet')
+      .loadRelationCountAndMap('user.wallets', 'user.wallet')
+      .getMany();
+
+    const amountinWallets = this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id =:id', { id })
+      .leftJoin('wallet', 'wallet.userId')
+      .addSelect('SUM(wallet.amount)', 'amountinWallets')
+      .getRawOne();
+
+    // return numberofWallets;
+    return amountinWallets;
+
+    // return this.userRepository.findOne({
+    //   where: { id: id },
+    //   relations: ['wallet'],
+    // });
   }
 
   update(id: number, data: any): Promise<any> {

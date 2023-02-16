@@ -8,7 +8,6 @@ import {
   Put,
   Req,
 } from '@nestjs/common';
-import { User } from 'src/users/entities/user.entity';
 import { WalletInterface, WalletService } from './wallet.service';
 
 interface CreateWalletDto {

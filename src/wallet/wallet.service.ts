@@ -29,7 +29,7 @@ export class WalletService {
   findOne(walletId: number): Promise<any> {
     return this.walletRepository.findOne({
       where: { walletId: walletId },
-      relations: ['user'],
+      relations: ['user', 'transactions'],
     });
   }
 
