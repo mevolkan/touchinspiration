@@ -1,10 +1,9 @@
-## Description
-Touch Inspiration
+## Touch Inspiration
 
 ## Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
 ## Running the app
