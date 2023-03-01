@@ -27,7 +27,9 @@ export class TransactionsService {
   }
 
   findOne(transactionId: number) {
-    return `This action returns a #${transactionId} transaction`;
+    return this.transactionRepository.findOne({
+      where: { transactionId },
+    });
   }
 
   update(transactionId: number, data: any): Promise<any> {

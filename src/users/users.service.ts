@@ -26,13 +26,6 @@ export class UsersService {
     });
   }
 
-  // findOne(id: number): Promise<any> {
-  //   return this.userRepository.findOne({
-  //     where: { id: id },
-  //     relations: ['wallet'],
-  //   });
-  // }
-
   findOne(id: number): Promise<any> {
     const numberofWallets = this.userRepository
       .createQueryBuilder('user')
